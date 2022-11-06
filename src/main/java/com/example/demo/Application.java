@@ -1,11 +1,16 @@
 package com.example.demo;
 
+import com.github.javafaker.Faker;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 
 import java.util.List;
+import java.util.Random;
 
 @SpringBootApplication
 public class Application {
@@ -67,11 +72,49 @@ public class Application {
 
             studentRepository.findStudentsByFirstNameEqualsAndAgeEquals("Maria", 21).forEach(System.out::println);
             studentRepository.findStudentsByFirstNameEqualsAndAgeIsGreaterThanEqual("Maria", 21).forEach(System.out::println);
-            System.out.println("**************************");
-            studentRepository.findStudentsByFirstNameEqualsAndAgeIsGreaterThanEqual2("Maria", 21).forEach(System.out::println);
+            System.out.println("**********JPQL****************");
+            studentRepository.findStudentsByFirstNameEqualsAndAgeIsGreaterThanEqualJPQL("Maria", 21).forEach(System.out::println);
+            System.out.println("**********NativeQuery****************");
+            studentRepository.findStudentsByFirstNameEqualsAndAgeIsGreaterThanEqualNative("Maria", 21).forEach(System.out::println);
+            System.out.println("**********NativeQuery Named parameter****************");
+            studentRepository.findStudentsByFirstNameEqualsAndAgeIsGreaterThanEqualNamedParameters("Maria", 21).forEach(System.out::println);
 
+            System.out.println("***************Deleting Maria 2");
+            System.out.println(studentRepository.deleteStudentById(3L));
+            generateRandomStudents(studentRepository);
+            Sort sort = Sort.by(Sort.Direction.ASC, "firstName");
+            studentRepository.findAll(sort).forEach(student -> System.out.println(student.getFirstName()));
 
+            //or
+            System.out.println("****************************Sort chained**********************");
+            sort = sort.by("firstName").ascending().and(Sort.by("age").descending());
+            studentRepository.findAll(sort).forEach(student -> System.out.println(student.getFirstName() + " " + student.getLastName() + " " + student.getAge()));
+
+            PageRequest pageRequest = PageRequest.of(0, 5);
+            studentRepository.findAll(pageRequest.withSort(sort)).forEach(student -> System.out.println(student));
+
+            pageRequest = PageRequest.of(0, 5, Sort.by("firstName").ascending());
+            Page<Student> page = studentRepository.findAll(pageRequest);
+            System.out.println(page);
         };
 
+    }
+
+    private static void generateRandomStudents(StudentRepository studentRepository) {
+        Faker faker = new Faker();
+
+        for (int i = 0; i < 20 ; i++) {
+            String firstName = faker.name().firstName();
+            String lastName = faker.name().lastName();
+            String email = String.format("%s.%s@amigoscode.edu", firstName, lastName);
+            Student student = new Student(
+                    firstName,
+                    lastName,
+                    email,
+                    faker.number().numberBetween(17, 55)
+            );
+
+            studentRepository.save(student);
+        }
     }
 }
