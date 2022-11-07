@@ -42,10 +42,11 @@ public class Course {
     )
     private String department;
 
-    @ManyToMany(
-            mappedBy = "courses"
+    @OneToMany(
+            cascade = {CascadeType.PERSIST, CascadeType.REMOVE},
+            mappedBy = "course"
     )
-    private Set<Student> students = new HashSet<>();
+    private Set<Enrolment> enrolments = new HashSet<>();
 
     public Long getId() {
         return id;
@@ -69,6 +70,20 @@ public class Course {
 
     public void setDepartment(String department) {
         this.department = department;
+    }
+
+    public Set<Enrolment> getEnrolments() {
+        return enrolments;
+    }
+
+    public void addEnrolment(Enrolment enrolment) {
+        if(!enrolments.contains(enrolment)){
+            enrolments.add(enrolment);
+        }
+    }
+
+    public void removeEnrolment(Enrolment enrolment) {
+        enrolments.remove(enrolment);
     }
 
     public Course(String courseName, String department) {

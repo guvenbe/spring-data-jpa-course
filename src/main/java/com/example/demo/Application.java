@@ -41,6 +41,21 @@ public class Application {
                     faker.number().numberBetween(17, 55));
             StudentIdCard studentIdCard = new StudentIdCard("123456789", student1);
             student1.setStudentIdCard(studentIdCard);
+
+            student1.addEnrolment(new Enrolment(
+                    new EnrolmentId(1L, 1L), student1, new Course("Computer Science", "IT"),
+                    LocalDateTime.now()
+            ));
+
+            student1.addEnrolment(new Enrolment(
+                    new EnrolmentId(1L, 2L), student1, new Course("Spring Data JPA", "IT"),
+                    LocalDateTime.now().minusDays(18)
+
+            ));
+//            student1.enrolToCourse(new Course("Computer Science", "IT"));
+//            student1.enrolToCourse(new Course("Spring Data JAP", "IT"));
+
+
             System.out.println("**************Book*******************");
             student1.addbook(new Book("War and Peace", LocalDateTime.now().minusDays(4)));
             student1.addbook(new Book("Clean Code", LocalDateTime.now().minusDays(4)));

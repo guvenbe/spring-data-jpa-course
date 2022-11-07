@@ -74,21 +74,11 @@ public class Student {
     )
     private Set<Book> books = new HashSet<>();
 
-    @ManyToMany(
-            cascade = {CascadeType.PERSIST, CascadeType.REMOVE}
+    @OneToMany(
+            cascade = {CascadeType.PERSIST, CascadeType.REMOVE},
+            mappedBy = "student"
     )
-    @JoinTable(
-            name = "enrolment",
-            joinColumns = @JoinColumn(
-                    name = "student_id",
-                    foreignKey = @ForeignKey(name = "enrolment_student_id_fk")
-            ),
-            inverseJoinColumns = @JoinColumn(
-                    name = "course_id",
-                    foreignKey = @ForeignKey(name = "enrolment_course_id_fk")
-            )
-    )
-    private Set<Course> courses = new HashSet<>();
+    private Set<Enrolment> enrolments = new HashSet<>();
 
     public Student(String firstName, String lastName, String email, Integer age) {
         this.firstName = firstName;
@@ -141,6 +131,19 @@ public class Student {
         return books;
     }
 
+    public Set<Enrolment> getEnrolments() {
+        return enrolments;
+    }
+
+    public void addEnrolment(Enrolment enrolment) {
+        if(!enrolments.contains(enrolment)){
+            enrolments.add(enrolment);
+        }
+    }
+
+    public void removeEnrolment(Enrolment enrolment) {
+            enrolments.remove(enrolment);
+    }
     public void setAge(Integer age) {
         this.age = age;
     }
