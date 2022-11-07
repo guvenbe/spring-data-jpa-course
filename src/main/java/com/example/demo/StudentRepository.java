@@ -10,6 +10,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 import java.util.Optional;
 
+@Transactional(readOnly = true)
 public interface StudentRepository extends JpaRepository<Student, Long> {
     Optional<Student> findStudentByEmail(String email);
 
@@ -29,6 +30,7 @@ public interface StudentRepository extends JpaRepository<Student, Long> {
     //    select * from Student where first_name='Maria' and age=18;
     @Query(value = "select * from Student where first_name= ?1 and age = ?2", nativeQuery = true)
     List<Student> findStudentsByFirstNameEqualsAndAgeIsGreaterThanEqualNative(String firstName, Integer age);
+
 
     @Query(value = "select * from Student where first_name= :firstName and age = :age", nativeQuery = true)
     List<Student> findStudentsByFirstNameEqualsAndAgeIsGreaterThanEqualNamedParameters(@Param("firstName") String firstName, @Param("age") Integer age);
